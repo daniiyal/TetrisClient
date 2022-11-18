@@ -113,8 +113,13 @@ namespace TetrisClientNorm
                 for (int j = 0; j < Column; j++)
                 {
                     client.SendMessage($"GetGrid {i} {j}" + '\n');
-
-                    int id = Convert.ToInt32(client.ReceiveResponse());
+                    var response = client.ReceiveResponse();
+                    if (response == "GameOver")
+                    {
+                        GameOverMenu.Visibility = Visibility.Visible;
+                        return;
+                    }
+                    int id = Convert.ToInt32(response);
                     imageControls[i, j].Source = tileImages[id];
                 }
             }
@@ -146,7 +151,8 @@ namespace TetrisClientNorm
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            client.SendMessage($"StartGame {Row} {Column}" + '\n');
+            GameOverMenu.Visibility = Visibility.Hidden;
         }
     }
 }
