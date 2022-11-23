@@ -34,11 +34,11 @@
                 ClipToBounds="True"
                 Loaded="GameCanvas_OnLoaded"/>
         </Viewbox>
-     
+
         <TextBlock x:Name="ScoreTest"
                    Grid.Row="0"
                    Grid.Column="1"
-                   TextAlignment="Center">Score</TextBlock>
+                   TextAlignment="Center" Text="Очки"/>
         
         <StackPanel Grid.Row="1"
                     Grid.Column="2"

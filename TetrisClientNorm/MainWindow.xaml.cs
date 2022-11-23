@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace TetrisClientNorm
 {
@@ -22,17 +15,7 @@ namespace TetrisClientNorm
     public partial class MainWindow : Window
     {
 
-        private readonly ImageSource[] tileImages = new ImageSource[]
-        {
-            new BitmapImage(new Uri("Assets/TileEmpty.png", UriKind.Relative)),
-            new BitmapImage(new Uri("Assets/TileCyan.png", UriKind.Relative)),
-            new BitmapImage(new Uri("Assets/TileOrange.png", UriKind.Relative)),
-            new BitmapImage(new Uri("Assets/TileRed.png", UriKind.Relative)),
-            new BitmapImage(new Uri("Assets/TileYellow.png", UriKind.Relative)),
-            new BitmapImage(new Uri("Assets/TileGreen.png", UriKind.Relative)),
-            new BitmapImage(new Uri("Assets/TilePurple.png", UriKind.Relative)),
-            new BitmapImage(new Uri("Assets/TileBlue.png", UriKind.Relative))
-        };
+        private readonly ImageSource[] tileImages;
 
         private readonly ImageSource[] blockImages = new ImageSource[]
         {
@@ -54,10 +37,25 @@ namespace TetrisClientNorm
 
         private Client client;
 
+        private ImageSource[] InitImages()
+        {
+            ImageSource[] tileImages =  new ImageSource[113];
+            tileImages[0] = new BitmapImage(new Uri("Assets/Tiles/Block-Empty.png", UriKind.Relative));
+
+            int tile = 0;
+            for (int i = 1; i < tileImages.Length; i++)
+            {
+                tileImages[i] = new BitmapImage(new Uri($"Assets/Tiles/tile ({i}).png", UriKind.Relative));
+            }
+
+            return tileImages;
+        }
+
         public MainWindow()
         {
             InitializeComponent();
             imageControls = SetupGameCanvas();
+            tileImages = InitImages();
             StartGame();
         }
 
@@ -95,8 +93,8 @@ namespace TetrisClientNorm
                         Height = cellSize
                     };
 
-                    Canvas.SetTop(imageControl, i*cellSize);
-                    Canvas.SetLeft(imageControl, j*cellSize);
+                    Canvas.SetTop(imageControl, i * cellSize);
+                    Canvas.SetLeft(imageControl, j * cellSize);
                     GameCanvas.Children.Add(imageControl);
                     imageControls[i, j] = imageControl;
                 }
@@ -108,35 +106,61 @@ namespace TetrisClientNorm
 
         private void DrawGrid()
         {
-            for (int i = 0; i < Row; i++)
+            client.SendMessage($"GetGrid" + '\n');
+            var response = client.ReceiveResponse();
+
+            if (response == "GameOver")
             {
-                for (int j = 0; j < Column; j++)
+                GameOverMenu.Visibility = Visibility.Visible;
+                return;
+            }
+
+            var rows = response.Split("n");
+
+            for (int i = 0; i < rows.Length-1; i++)
+            {
+                var cols = rows[i].Split("-");
+                for (int j = 0; j < cols.Length-1; j++)
                 {
-                    client.SendMessage($"GetGrid {i} {j}" + '\n');
-                    var response = client.ReceiveResponse();
-                    if (response == "GameOver")
-                    {
-                        GameOverMenu.Visibility = Visibility.Visible;
-                        return;
-                    }
-                    int id = Convert.ToInt32(response);
+                    int id;
+                    Int32.TryParse(cols[j], out id);
                     imageControls[i, j].Source = tileImages[id];
                 }
             }
+
+            //for (int i = 0; i < Row; i++)
+            //{
+            //    for (int j = 0; j < Column; j++)
+            //    {
+            //        client.SendMessage($"GetGrid" + '\n');
+            //        var response = client.ReceiveResponse();
+            //        if (response == "GameOver")
+            //        {
+            //            GameOverMenu.Visibility = Visibility.Visible;
+            //            return;
+            //        }
+            //        int id = Convert.ToInt32(response);
+            //        imageControls[i, j].Source = tileImages[id];
+            //    }
+            //}
         }
 
         private void DrawBlock()
         {
             client.SendMessage($"GetBlock" + '\n');
 
-            string blockPositions = client.ReceiveResponse();
+            var blockPositions = client.ReceiveResponse().Split('n');
 
-            var id = Convert.ToInt32(blockPositions.Split('n').Last());
-            for (int i = 0; i < blockPositions.Split('n').Length-1; i++)
+           
+            for (int i = 0; i < blockPositions.Length - 1; i++)
             {
-                var block = blockPositions.Split('n')[i];
-                var row = Convert.ToInt32(block.Split('-')[0]);
-                var col = Convert.ToInt32(block.Split('-')[1]);
+                int row, col, id;
+
+                var block = blockPositions[i].Split('-');
+
+                Int32.TryParse(block[0], out row);
+                Int32.TryParse(block[1], out col);
+                Int32.TryParse(block[2], out id);
 
                 imageControls[row, col].Source = tileImages[id];
             }
@@ -146,13 +170,43 @@ namespace TetrisClientNorm
 
         private async void GameCanvas_OnLoaded(object sender, RoutedEventArgs e)
         {
-            await GameLoop();
+            var window = Window.GetWindow(this);
+            window.KeyDown += KeyEvents;
+            try
+            {
+                await GameLoop();
+            }
+            catch(FormatException exception)
+            {
+                MessageBox.Show(exception.Message);
+                MessageBox.Show(exception.StackTrace);
+            }
         }
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            client.SendMessage($"StartGame {Row} {Column}" + '\n');
+            client.SendMessage($"StartGame {Row} {Column}");
             GameOverMenu.Visibility = Visibility.Hidden;
+        }
+
+        private void KeyEvents(object sender, KeyEventArgs e)
+        {
+
+            switch (e.Key)
+            {
+                case Key.Left:
+                    client.SendMessage("Left");
+                    break;
+                case Key.Right:
+                    client.SendMessage("Right");
+                    break;
+                case Key.Up:
+                    client.SendMessage("Rotate");
+                    break;
+                case Key.Space:
+                    client.SendMessage("Drop");
+                    break;
+            }
         }
     }
 }
