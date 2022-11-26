@@ -19,7 +19,6 @@
     <None Remove="Assets\Block-T.png" />
     <None Remove="Assets\Block-Z.png" />
     <None Remove="Assets\Icon.ico" />
-    <None Remove="Assets\photo.jpg" />
     <None Remove="Assets\TileBlue.png" />
     <None Remove="Assets\TileCyan.png" />
     <None Remove="Assets\TileEmpty.png" />
@@ -299,7 +298,6 @@
     <Resource Include="Assets\Block-T.png" />
     <Resource Include="Assets\Block-Z.png" />
     <Resource Include="Assets\Icon.ico" />
-    <Resource Include="Assets\photo.jpg" />
     <Resource Include="Assets\TileBlue.png" />
     <Resource Include="Assets\TileCyan.png" />
     <Resource Include="Assets\TileEmpty.png" />

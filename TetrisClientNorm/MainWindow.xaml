@@ -38,7 +38,7 @@
         <TextBlock x:Name="ScoreTest"
                    Grid.Row="0"
                    Grid.Column="1"
-                   TextAlignment="Center" Text="Очки"/>
+                   TextAlignment="Center" Text="Очки: 0"/>
         
         <StackPanel Grid.Row="1"
                     Grid.Column="2"
@@ -61,7 +61,8 @@
                            FontSize="48"
                            Foreground="AliceBlue"
                            TextAlignment="Center"/>
-                <TextBlock Text="Очки: "
+                <TextBlock x:Name="FinalScore"
+                           Text="Очки: "
                            FontSize="36"
                            Foreground="AliceBlue"
                            TextAlignment="Center"/>
@@ -73,5 +74,35 @@
             </StackPanel>
         </Grid>
 
+        <Grid x:Name="StartMenu"
+              Background="#CC000000"
+              Grid.RowSpan="2"
+              Grid.ColumnSpan="3"
+              Visibility="Visible">
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                <Button Content="Играть"
+                        Background="LightGreen"
+                        Padding="5"
+                        Click="StartGameButton_OnClick"/>
+                <Button Content="Поиск сервера"
+                        Background="LightGreen"
+                        Padding="5"
+                        Click="FindServer"
+                        Margin="0, 20, 0, 0"/>
+                <ListView Name="ServerAddresses" 
+                          SelectionChanged="ServerAddresses_OnSelectionChanged" 
+                          FontSize="16"
+                          HorizontalAlignment="Center" 
+                          Margin="0, 20, 0, 0">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=IpAddress}" Width="125">Адрес сервера</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Port}" Width="75">Порт</GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

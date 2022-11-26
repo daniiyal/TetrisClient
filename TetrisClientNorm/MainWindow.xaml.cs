@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -54,9 +55,10 @@ namespace TetrisClientNorm
         public MainWindow()
         {
             InitializeComponent();
+            client = new Client();
             imageControls = SetupGameCanvas();
             tileImages = InitImages();
-            StartGame();
+            //ShowStartMenu();
         }
 
         public async Task GameLoop()
@@ -71,10 +73,8 @@ namespace TetrisClientNorm
 
         private void StartGame()
         {
-            client = new Client();
-            client.ConnectServer("127.0.0.1", 333);
+            client.ConnectServer();
 
-            client.SendMessage($"StartGame {Row} {Column}" + '\n');
         }
 
 
@@ -112,6 +112,7 @@ namespace TetrisClientNorm
             if (response == "GameOver")
             {
                 GameOverMenu.Visibility = Visibility.Visible;
+                FinalScore.Text = ScoreTest.Text;
                 return;
             }
 
@@ -128,21 +129,7 @@ namespace TetrisClientNorm
                 }
             }
 
-            //for (int i = 0; i < Row; i++)
-            //{
-            //    for (int j = 0; j < Column; j++)
-            //    {
-            //        client.SendMessage($"GetGrid" + '\n');
-            //        var response = client.ReceiveResponse();
-            //        if (response == "GameOver")
-            //        {
-            //            GameOverMenu.Visibility = Visibility.Visible;
-            //            return;
-            //        }
-            //        int id = Convert.ToInt32(response);
-            //        imageControls[i, j].Source = tileImages[id];
-            //    }
-            //}
+            ScoreTest.Text = "Очки: " + rows[rows.Length - 1];
         }
 
         private void DrawBlock()
@@ -166,27 +153,26 @@ namespace TetrisClientNorm
             }
         }
 
-
-
-        private async void GameCanvas_OnLoaded(object sender, RoutedEventArgs e)
+        private void GameCanvas_OnLoaded(object sender, RoutedEventArgs e)
         {
             var window = Window.GetWindow(this);
             window.KeyDown += KeyEvents;
-            try
-            {
-                await GameLoop();
-            }
-            catch(FormatException exception)
-            {
-                MessageBox.Show(exception.Message);
-                MessageBox.Show(exception.StackTrace);
-            }
+  
         }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             client.SendMessage($"StartGame {Row} {Column}");
+            StartMenu.Visibility = Visibility.Hidden;
             GameOverMenu.Visibility = Visibility.Hidden;
+            await GameLoop();
+        }
+
+        private async void FindServer(object sender, RoutedEventArgs e)
+        {
+            var list = await client.FindServer();
+            
+            ServerAddresses.Items.Add(new Address(list[0], list[1]) );
         }
 
         private void KeyEvents(object sender, KeyEventArgs e)
@@ -207,6 +193,21 @@ namespace TetrisClientNorm
                     client.SendMessage("Drop");
                     break;
             }
+        }
+
+        private void ServerAddresses_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedAddress = (Address) ServerAddresses.SelectedItem;
+            client.serverEndPoint = new IPEndPoint(IPAddress.Parse(selectedAddress.IpAddress), Convert.ToInt32(selectedAddress.Port));
+        }
+
+        private async void StartGameButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            StartGame();
+            client.SendMessage($"StartGame {Row} {Column}");
+            StartMenu.Visibility = Visibility.Hidden;
+            GameOverMenu.Visibility = Visibility.Hidden;
+            await GameLoop();
         }
     }
 }

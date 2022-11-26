@@ -1,28 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Accessibility;
 
 namespace TetrisClientNorm
 {
 
     public class Client
     {
-        Socket client;
-        
+        private Socket client;
+
+        private UdpClient udpClient;
+
+        public IPEndPoint serverEndPoint { get; set; }
+
         public Client()
         {
             client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            udpClient = new UdpClient();
+            udpClient.Client.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 0));
         }
 
-        public void ConnectServer(String ip, int port)
+        public void ConnectServer()
         {
-            IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-            client.Connect(ipEndPoint);
+            udpClient.Close();
+            client.Connect(serverEndPoint);
         }
 
         public async void SendMessage(String message)
@@ -50,6 +54,47 @@ namespace TetrisClientNorm
         public void DisconnectServer()
         {
             client.Shutdown(SocketShutdown.Both);
+        }
+
+        public async Task<List<string>> FindServer()
+        {
+            //List<string> address;
+            Task.Run(SendMessageAsync);
+            var address = await ReceiveMessage();
+            return address;
+        }
+
+        private async Task SendMessageAsync()
+        {
+            while (true)
+            {
+                var data = Encoding.ASCII.GetBytes("Want to play");
+                udpClient.Send(data, data.Length, IPAddress.Broadcast.ToString(), 333);
+                await Task.Delay(1000);
+            }
+        }
+
+        private async Task<List<string>> ReceiveMessage()
+        {
+            var from = new IPEndPoint(0, 0);
+
+          
+            while (true)
+            {
+                var receiveBUffer = udpClient.Receive(ref from);
+                
+                Console.WriteLine(Encoding.ASCII.GetString(receiveBUffer));
+
+                if (receiveBUffer != null)
+                {
+                    return new List<string>()
+                    {
+                        from.Address.ToString(),
+                        from.Port.ToString()
+                    };
+                }
+           
+            }
         }
 
     }
