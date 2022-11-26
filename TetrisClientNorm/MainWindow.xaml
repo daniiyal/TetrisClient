@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TetrisClientNorm"
         mc:Ignorable="d"
-        Title="Tetris Client-Server" Height="600" Width="600"
+        Title="Tetris Client-Server" Height="726" Width="538"
         MinHeight="600" MinWidth="600"
+        ResizeMode="CanResizeWithGrip"
+        WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI Light" FontSize="28">
     <Grid>
         <Grid.RowDefinitions>
@@ -19,7 +21,7 @@
             <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        
+
         <Grid.Background>
             <ImageBrush ImageSource="Assets/Back.jpg"></ImageBrush>
         </Grid.Background>
@@ -39,7 +41,7 @@
                    Grid.Row="0"
                    Grid.Column="1"
                    TextAlignment="Center" Text="Очки: 0"/>
-        
+
         <StackPanel Grid.Row="1"
                     Grid.Column="2"
                     VerticalAlignment="Center"
@@ -49,7 +51,7 @@
                    Margin="20"
                    Width="125"></Image>
         </StackPanel>
-        
+
         <Grid x:Name="GameOverMenu"
                         Background="#CC000000"
                         Grid.RowSpan="2"
@@ -79,22 +81,100 @@
               Grid.RowSpan="2"
               Grid.ColumnSpan="3"
               Visibility="Visible">
+
             <StackPanel HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
+                        VerticalAlignment="Center"
+                        Width="200">
                 <Button Content="Играть"
                         Background="LightGreen"
                         Padding="5"
                         Click="StartGameButton_OnClick"/>
+                <Button Content="Настройки"
+                        Background="LightGreen"
+                        Padding="5"
+                        Click="SettingButton_OnClick"
+                        Margin="0, 20, 0, 0"/>
+                <Button Content="Выход"
+                        Background="LightGreen"
+                        Padding="5"
+                        Click="StartGameButton_OnClick"
+                        Margin="0, 20, 0, 0"/>
+            </StackPanel>
+
+        </Grid>
+
+        <Grid x:Name="SettingMenu"
+              Background="#CC000000"
+              Grid.RowSpan="2"
+              Grid.ColumnSpan="3"
+              Visibility="Hidden">
+
+            <Grid HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Margin="0, 70, 0, 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="100"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="160"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <TextBlock Foreground="AliceBlue"
+                           TextAlignment="Center" 
+                           Text="Настройки"
+                           FontSize="40"
+                           Grid.Row="0"/>
+                <TextBlock Foreground="AliceBlue"
+                           TextAlignment="Center" 
+                           Text="Ввести адрес сервера"
+                           FontSize="20"
+                           Grid.Row="2"/>
+                <Grid Grid.Row="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="0"
+                               Foreground="AliceBlue"
+                               TextAlignment="Left" 
+                               VerticalAlignment="Top"
+                               Text="Адрес"
+                               FontSize="16"
+                               Margin="0, 20, 0, 0"/>
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="1" 
+                               Foreground="AliceBlue"
+                               TextAlignment="Left" 
+                               VerticalAlignment="Top"
+                               Text="Порт"
+                               FontSize="16"
+                               Margin="0, 20, 0, 0"/>
+                    <TextBox Height="20" Grid.Row="1" Grid.Column="0"></TextBox>
+                    <TextBox Height="20" Grid.Row="1" Grid.Column="1"></TextBox>
+                </Grid>
+
                 <Button Content="Поиск сервера"
                         Background="LightGreen"
                         Padding="5"
                         Click="FindServer"
-                        Margin="0, 20, 0, 0"/>
+                        Margin="0, 50, 0, 0"
+                        Grid.Row="4"/>
                 <ListView Name="ServerAddresses" 
                           SelectionChanged="ServerAddresses_OnSelectionChanged" 
                           FontSize="16"
                           HorizontalAlignment="Center" 
-                          Margin="0, 20, 0, 0">
+                          Margin="0, 5, 0, 0"
+                          Grid.Row="5">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=IpAddress}" Width="125">Адрес сервера</GridViewColumn>
@@ -102,7 +182,14 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
-            </StackPanel>
+                <Button Content="Назад"
+                        Background="LightGreen"
+                        Padding="5"
+                        VerticalAlignment="Bottom"
+                        Click="BackButton_OnClick"
+                        Grid.Row="7"/>
+            </Grid>
+
         </Grid>
     </Grid>
 </Window>

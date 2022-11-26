@@ -209,5 +209,17 @@ namespace TetrisClientNorm
             GameOverMenu.Visibility = Visibility.Hidden;
             await GameLoop();
         }
+
+        private void SettingButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            StartMenu.Visibility = Visibility.Hidden;
+            SettingMenu.Visibility = Visibility.Visible;
+        }
+
+        private void BackButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            StartMenu.Visibility = Visibility.Visible;
+            SettingMenu.Visibility = Visibility.Hidden;
+        }
     }
 }
