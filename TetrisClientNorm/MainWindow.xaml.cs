@@ -31,10 +31,9 @@ namespace TetrisClientNorm
         };
 
 
-        public static int Column = 10;
-        public static int Row = 20;
+        public static string FieldSize = "s"; 
 
-        private readonly Image[,] imageControls;
+        private Image[,] imageControls;
 
         private Client client;
 
@@ -56,7 +55,6 @@ namespace TetrisClientNorm
         {
             InitializeComponent();
             client = new Client();
-            imageControls = SetupGameCanvas();
             tileImages = InitImages();
             //ShowStartMenu();
         }
@@ -71,21 +69,37 @@ namespace TetrisClientNorm
             }
         }
 
-        private void StartGame()
+        private async Task StartGame()
         {
-            client.ConnectServer();
+            client.SendMessage($"StartGame {FieldSize}");
+            var response = client.ReceiveResponse();
+            if (response.Split('-')[0] == "GameStarted")
+            {
+                int rows, cols;
+                Int32.TryParse(response.Split('-')[1], out rows);
+                Int32.TryParse(response.Split('-')[2], out cols);
 
+                imageControls = SetupGameCanvas(rows, cols);
+
+                StartMenu.Visibility = Visibility.Hidden;
+                GameOverMenu.Visibility = Visibility.Hidden;
+                await GameLoop();
+            }
         }
 
 
-        private Image[,] SetupGameCanvas()
+        private Image[,] SetupGameCanvas(int rows, int cols)
         {
-            Image[,] imageControls = new Image[Row, Column];
+            Image[,] imageControls = new Image[rows, cols];
             int cellSize = 25;
 
-            for (int i = 0; i < Row; i++)
+            GameCanvas.Width = cellSize * cols;
+            GameCanvas.Height = cellSize * rows;
+            GameCanvas.Children.Clear();
+
+            for (int i = 0; i < rows; i++)
             {
-                for (int j = 0; j < Column; j++)
+                for (int j = 0; j < cols; j++)
                 {
                     Image imageControl = new Image()
                     {
@@ -106,7 +120,7 @@ namespace TetrisClientNorm
 
         private void DrawGrid()
         {
-            client.SendMessage($"GetGrid" + '\n');
+            client.SendMessage("GetGrid" + '\n');
             var response = client.ReceiveResponse();
 
             if (response == "GameOver")
@@ -118,12 +132,12 @@ namespace TetrisClientNorm
 
             var rows = response.Split("n");
 
+            int id;
             for (int i = 0; i < rows.Length-1; i++)
             {
                 var cols = rows[i].Split("-");
                 for (int j = 0; j < cols.Length-1; j++)
                 {
-                    int id;
                     Int32.TryParse(cols[j], out id);
                     imageControls[i, j].Source = tileImages[id];
                 }
@@ -134,7 +148,7 @@ namespace TetrisClientNorm
 
         private void DrawBlock()
         {
-            client.SendMessage($"GetBlock" + '\n');
+            client.SendMessage("GetBlock" + '\n');
 
             var blockPositions = client.ReceiveResponse().Split('n');
 
@@ -162,10 +176,7 @@ namespace TetrisClientNorm
 
         private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            client.SendMessage($"StartGame {Row} {Column}");
-            StartMenu.Visibility = Visibility.Hidden;
-            GameOverMenu.Visibility = Visibility.Hidden;
-            await GameLoop();
+            await StartGame();
         }
 
         private async void FindServer(object sender, RoutedEventArgs e)
@@ -203,11 +214,8 @@ namespace TetrisClientNorm
 
         private async void StartGameButton_OnClick(object sender, RoutedEventArgs e)
         {
-            StartGame();
-            client.SendMessage($"StartGame {Row} {Column}");
-            StartMenu.Visibility = Visibility.Hidden;
-            GameOverMenu.Visibility = Visibility.Hidden;
-            await GameLoop();
+            client.ConnectServer();
+            await StartGame();
         }
 
         private void SettingButton_OnClick(object sender, RoutedEventArgs e)
@@ -220,6 +228,12 @@ namespace TetrisClientNorm
         {
             StartMenu.Visibility = Visibility.Visible;
             SettingMenu.Visibility = Visibility.Hidden;
+        }
+
+        private void ToggleButton_OnChecked(object sender, RoutedEventArgs e)
+        {
+            RadioButton li = (sender as RadioButton);
+            FieldSize = li.Name;
         }
     }
 }
