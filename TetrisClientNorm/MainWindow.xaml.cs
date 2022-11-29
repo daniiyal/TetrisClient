@@ -81,6 +81,7 @@ namespace TetrisClientNorm
 
                 imageControls = SetupGameCanvas(rows, cols);
 
+                GameScreen.Visibility = Visibility.Visible;
                 StartMenu.Visibility = Visibility.Hidden;
                 GameOverMenu.Visibility = Visibility.Hidden;
                 await GameLoop();
@@ -126,6 +127,7 @@ namespace TetrisClientNorm
             if (response == "GameOver")
             {
                 GameOverMenu.Visibility = Visibility.Visible;
+                GameScreen.Visibility = Visibility.Hidden;
                 FinalScore.Text = ScoreTest.Text;
                 return;
             }

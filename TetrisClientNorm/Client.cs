@@ -42,10 +42,20 @@ namespace TetrisClientNorm
 
             while (true)
             {
-                var count = client.Receive(bytesRead);
-                if (count == 0 || bytesRead[0] == '\n') break;
+                try
+                {
+                    var count = client.Receive(bytesRead);
+                    if (count == 0 || bytesRead[0] == '\n') break;
 
-                response.Add(bytesRead[0]);
+                    response.Add(bytesRead[0]);
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+
             }
 
             return Encoding.UTF8.GetString(response.ToArray());

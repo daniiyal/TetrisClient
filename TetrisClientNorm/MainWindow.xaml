@@ -5,57 +5,67 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TetrisClientNorm"
         mc:Ignorable="d"
-        Title="Tetris Client-Server" Height="700" Width="600"
+        Title="Tetris Client-Server" Height="800" Width="600"
         MinHeight="700" MinWidth="600"
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI Light" FontSize="28">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-
         <Grid.Background>
             <ImageBrush ImageSource="Assets/Back.jpg"></ImageBrush>
         </Grid.Background>
 
-        <Viewbox Grid.Row="1"
-                 Grid.Column="1"
-                 Margin="0,0,0,20">
-            <Canvas x:Name="GameCanvas"
-                Background="Black"
-                ClipToBounds="True"
-                Loaded="GameCanvas_OnLoaded"/>
-        </Viewbox>
+        <Grid x:Name="GameScreen"
+              Visibility="Hidden">
 
-        <TextBlock x:Name="ScoreTest"
-                   Grid.Row="0"
-                   Grid.Column="1"
-                   TextAlignment="Center" Text="Очки: 0"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="1"
-                    Grid.Column="2"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Left">
-            <TextBlock Text="След" TextAlignment="Center"></TextBlock>
-            <Image x:Name="NextImage"
-                   Margin="20"
-                   Width="125"></Image>
-        </StackPanel>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <Viewbox Grid.Row="1"
+                     Grid.Column="1"
+                     Margin="0,0,0,20">
+                <Canvas x:Name="GameCanvas"
+                        Background="Black"
+                        ClipToBounds="True"
+                        Loaded="GameCanvas_OnLoaded"/>
+            </Viewbox>
+
+            <TextBlock x:Name="ScoreTest"
+                       Grid.Row="0"
+                       Grid.Column="1"
+                       TextAlignment="Center" Text="Очки: 0"/>
+
+            <StackPanel Grid.Row="1"
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left">
+                <TextBlock Text="След" TextAlignment="Center"></TextBlock>
+                <Image x:Name="NextImage"
+                       Margin="20"
+                       Width="125"></Image>
+            </StackPanel>
+        </Grid>
+        
 
         <Grid x:Name="GameOverMenu"
-                        Background="#CC000000"
                         Grid.RowSpan="2"
                         Grid.ColumnSpan="3"
                         Visibility="Hidden">
+
+            <Grid>
+                <Rectangle Fill="Black"/>
+                <Image Source="Assets/photo.jpg" Opacity="0.5" Stretch="Fill"></Image>
+            </Grid>
+
             <StackPanel HorizontalAlignment="Center"
                         VerticalAlignment="Center">
                 <TextBlock Text="Конец игры"
