@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TetrisClientNorm"
         mc:Ignorable="d"
-        Title="Tetris Client-Server" Height="800" Width="600"
+        Title="Tetris Client-Server" Height="1000" Width="800"
         MinHeight="700" MinWidth="600"
         ResizeMode="CanResizeWithGrip"
         WindowStartupLocation="CenterScreen"
@@ -17,7 +17,7 @@
         </Grid.Background>
 
         <Grid x:Name="GameScreen"
-              Visibility="Hidden">
+              Visibility="Visible">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
@@ -26,23 +26,23 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <Viewbox Grid.Row="1"
-                     Grid.Column="1"
-                     Margin="0,0,0,20">
+                     Grid.ColumnSpan="2"
+                     Margin="50,0,0,20">
                 <Canvas x:Name="GameCanvas"
                         Background="Black"
                         ClipToBounds="True"
-                        Loaded="GameCanvas_OnLoaded"/>
+                        Loaded="GameCanvas_OnLoaded" />
             </Viewbox>
 
             <TextBlock x:Name="ScoreTest"
                        Grid.Row="0"
                        Grid.Column="1"
-                       TextAlignment="Center" Text="Очки: 0"/>
+                       TextAlignment="Center" Text="Очки: 0" />
 
             <StackPanel Grid.Row="1"
                         Grid.Column="2"
@@ -51,37 +51,151 @@
                 <TextBlock Text="След" TextAlignment="Center"></TextBlock>
                 <Image x:Name="NextImage"
                        Margin="20"
-                       Width="125"></Image>
+                       Width="125">
+                </Image>
             </StackPanel>
         </Grid>
-        
+
 
         <Grid x:Name="GameOverMenu"
-                        Grid.RowSpan="2"
-                        Grid.ColumnSpan="3"
-                        Visibility="Hidden">
+              Grid.RowSpan="2"
+              Grid.ColumnSpan="3"
+              Visibility="Hidden">
 
             <Grid>
-                <Rectangle Fill="Black"/>
-                <Image Source="Assets/photo.jpg" Opacity="0.5" Stretch="Fill"></Image>
+                <Rectangle Fill="Black" />
+                <Image Source="Assets/photo.jpg"
+                       Opacity="0.5"
+                       Stretch="UniformToFill">
+                </Image>
             </Grid>
 
             <StackPanel HorizontalAlignment="Center"
                         VerticalAlignment="Center">
                 <TextBlock Text="Конец игры"
-                           FontSize="48"
+                           FontSize="60"
+                           FontFamily="Roboto"
+                           FontWeight="Bold"
                            Foreground="AliceBlue"
-                           TextAlignment="Center"/>
+                           TextAlignment="Center"
+                           Margin="0, 0, 0, 40" />
                 <TextBlock x:Name="FinalScore"
                            Text="Очки: "
+                           FontSize="48"
+                           FontFamily="Roboto"
+                           FontWeight="Bold"
+                           Foreground="AliceBlue"
+                           TextAlignment="Center"
+                           Margin="0, 0, 0, 20" />
+                <Button Content="Играть заново"
+                        FontSize="48"
+                        FontFamily="Roboto"
+                        FontWeight="Bold"
+                        Background="LightGreen"
+                        Margin="0, 20, 0, 0"
+                        Padding="15"
+                        Click="ButtonBase_OnClick" />
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="HighScore"
+              Grid.RowSpan="2"
+              Grid.ColumnSpan="3"
+              Visibility="Hidden">
+
+            <Grid>
+                <Rectangle Fill="Black" />
+                <Image Source="Assets/record.png"
+                       Opacity="0.5"
+                       Stretch="UniformToFill">
+                </Image>
+            </Grid>
+
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Margin="0, 100, 0, 0">
+
+                <TextBlock Text="Конец игры"
+                           FontFamily="Roboto"
+                           FontWeight="Bold"
                            FontSize="36"
                            Foreground="AliceBlue"
                            TextAlignment="Center"/>
+
+                <TextBlock FontFamily="Roboto"
+                           FontWeight="Bold"
+                           FontSize="36"
+                           Foreground="MediumAquamarine"
+                           TextAlignment="Center"
+                           Margin="0, 50, 0, 0">
+                    Вы попали
+                    <LineBreak />
+                    в таблицу рекордов
+                </TextBlock>
+                <TextBlock x:Name="FinalHighScore"
+                           Text="Очки: "
+                           FontFamily="Roboto"
+                           FontWeight="Bold"
+                           FontSize="24"
+                           Foreground="AliceBlue"
+                           TextAlignment="Center"
+                           Margin="0, 30, 0, 0" />
+
+                <Grid x:Name="TopScoreMessage">
+
+                </Grid>
+                <Grid x:Name="UsernameInput"
+                      Visibility="Visible">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Введите имя: "
+                               FontSize="20"
+                               FontFamily="Roboto"
+                               FontWeight="Bold"
+                               Foreground="Azure"
+                               Grid.Row="0"
+                               TextAlignment="Left"
+                               Margin="0, 30, 0, 0" />
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="Username"
+                                 Grid.Column="0"
+                                 Margin="0, 0, 10, 0"
+                                 TextChanged="Username_OnTextChanged"
+                                 TextWrapping="WrapWithOverflow" />
+                        <Button Grid.Column="1"
+                                Content="ОК"
+                                Width="100"
+                                Padding="5"
+                                Click="AddScoreName_Button_OnClick" />
+
+                    </Grid>
+
+                </Grid>
+
                 <Button Content="Играть заново"
                         Background="LightGreen"
+                        FontFamily="Roboto"
+                        FontWeight="Bold"
                         Margin="0, 20, 0, 0"
-                        Padding="5"
-                        Click="ButtonBase_OnClick"/>
+                        Padding="15"
+                        Click="ButtonBase_OnClick" />
+
+                <Button Content="Выйти в меню"
+                        Background="LightCoral"
+                        FontFamily="Roboto"
+                        FontWeight="Bold"
+                        Margin="0, 20, 0, 0"
+                        Padding="15"
+                        Click="BackToMenuButton_OnClick" />
             </StackPanel>
         </Grid>
 
@@ -91,24 +205,158 @@
               Grid.ColumnSpan="3"
               Visibility="Visible">
 
+            <Canvas>
+
+                <Button
+                    Canvas.Right="20"
+                    Canvas.Top="20"
+                    Width="50"
+                    Click="RecordsButton_OnClick">
+                    <Image Source="Assets/cup.png"
+                           Opacity="0.5"
+                           Stretch="UniformToFill">
+                    </Image>
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="25" />
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+            </Canvas>
             <StackPanel HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Width="400">
                 <Button Content="Играть"
                         Background="LightGreen"
                         Padding="15"
-                        Click="StartGameButton_OnClick"/>
+                        Click="StartGameButton_OnClick" />
                 <Button Content="Настройки"
                         Background="LightGreen"
                         Padding="15"
                         Click="SettingButton_OnClick"
-                        Margin="0, 50, 0, 0"/>
+                        Margin="0, 50, 0, 0" />
                 <Button Content="Выход"
                         Background="LightGreen"
                         Padding="15"
                         Click="StartGameButton_OnClick"
-                        Margin="0, 50, 0, 0"/>
+                        Margin="0, 50, 0, 0" />
             </StackPanel>
+
+        </Grid>
+
+        <Grid x:Name="TopScorers"
+              Grid.RowSpan="2"
+              Grid.ColumnSpan="3"
+              Visibility="Hidden"
+              Margin="0, 20, 0, 20">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="5*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="5*"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="1"
+                      Margin="0, 0, 0, 10">
+
+                    <Grid>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Foreground="MediumSlateBlue"
+                                   FontFamily="Roboto"
+                                   FontWeight="Bold"
+                                   Text="Выберите поле"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+
+                        <Grid Grid.Row="1"
+                              Margin="0, 20, 0, 0"
+                              VerticalAlignment="Center">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+                            <RadioButton Content="Маленькое"
+                                         Grid.Column="0"
+                                         VerticalAlignment="Center"
+                                         Foreground="MediumSlateBlue"
+                                         FontSize="15"
+                                         Name="small"
+                                         Checked="ToggleRecordsButton_OnChecked"
+                                         IsChecked="True"
+                                         HorizontalAlignment="Center" />
+                            <RadioButton Content="Среднее"
+                                         Grid.Column="1"
+                                         VerticalAlignment="Center"
+                                         Foreground="MediumSlateBlue"
+                                         Name="medium"
+                                         FontSize="15"
+                                         Checked="ToggleRecordsButton_OnChecked"
+                                         HorizontalAlignment="Center" />
+                            <RadioButton Content="Большое"
+                                         Grid.Column="2"
+                                         VerticalAlignment="Center"
+                                         Foreground="MediumSlateBlue"
+                                         Name="large"
+                                         FontSize="15"
+                                         HorizontalAlignment="Center"
+                                         Checked="ToggleRecordsButton_OnChecked" />
+                        </Grid>
+
+                    </Grid>
+
+                </Grid>
+
+                <DataGrid x:Name="TopScore"
+                          Grid.Row="1"
+                          Grid.Column="1"
+                          FontSize="24">
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn Header="Имя"
+                                            Binding="{Binding Name}"
+                                            Width="*" />
+                        <DataGridTextColumn Header="Поле"
+                                            Binding="{Binding FieldSize}"
+                                            Width="*" />
+                        <DataGridTextColumn Header="Очки"
+                                            Binding="{Binding ScoreNum}"
+                                            Width="*" />
+                        <DataGridTextColumn Header="Время"
+                                            Binding="{Binding Time}"
+                                            Width="*" />
+                    </DataGrid.Columns>
+
+                </DataGrid>
+
+                <Button Content="Выйти в меню"
+                        Background="LightCoral"
+                        FontFamily="Roboto"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Padding="20"
+                        Click="BackToMenuButton_OnClick"
+                        Grid.Row="2"
+                        Grid.Column="1" />
+
+            </Grid>
+
 
         </Grid>
 
@@ -119,8 +367,8 @@
               Visibility="Hidden">
 
             <Grid HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Margin="0, 70, 0, 0">
+                  VerticalAlignment="Top"
+                  Margin="0, 70, 0, 0">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
@@ -131,16 +379,16 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Foreground="AliceBlue"
-                           TextAlignment="Center" 
+                           TextAlignment="Center"
                            Text="Настройки"
                            FontSize="40"
-                           Grid.Row="0"/>
+                           Grid.Row="0" />
 
-  
+
                 <Grid Grid.Row="2">
 
                     <Grid>
-                       
+
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"></RowDefinition>
                             <RowDefinition Height="Auto"></RowDefinition>
@@ -163,29 +411,30 @@
                             <TextBlock Grid.Row="0"
                                        Grid.ColumnSpan="2"
                                        Foreground="AliceBlue"
-                                       TextAlignment="Center" 
+                                       TextAlignment="Center"
                                        Text="Ввести адрес сервера"
                                        FontSize="20"
-                                       Margin="0, 0, 0 ,10"/>
+                                       Margin="0, 0, 0 ,10" />
 
                             <TextBlock Grid.Row="1"
                                        Grid.Column="0"
                                        Foreground="AliceBlue"
                                        Text="Адрес"
-                                       FontSize="16"/>
+                                       FontSize="16" />
 
                             <TextBlock Grid.Row="1"
-                                       Grid.Column="1" 
+                                       Grid.Column="1"
                                        Foreground="AliceBlue"
                                        Text="Порт"
-                                       FontSize="16"/>
+                                       FontSize="16" />
 
-                            <TextBox Height="20" 
-                                     Grid.Row="2" 
-                                     Grid.Column="0"/>
+                            <TextBox Height="20"
+                                     Grid.Row="2"
+                                     Grid.Column="0" />
 
-                            <TextBox Grid.Row="2" 
-                                     Grid.Column="1"></TextBox>
+                            <TextBox Grid.Row="2"
+                                     Grid.Column="1">
+                            </TextBox>
                         </Grid>
 
                         <Grid Grid.Row="1"
@@ -200,10 +449,10 @@
                                     Background="LightGray"
                                     Padding="5"
                                     Click="FindServer"
-                                    Grid.Row="0"/>
+                                    Grid.Row="0" />
 
-                            <ListView Name="ServerAddresses" 
-                                      SelectionChanged="ServerAddresses_OnSelectionChanged" 
+                            <ListView Name="ServerAddresses"
+                                      SelectionChanged="ServerAddresses_OnSelectionChanged"
                                       FontSize="16"
                                       Margin="0, 5, 0, 0"
                                       Grid.Row="1">
@@ -225,14 +474,14 @@
                                 <RowDefinition Height="Auto"></RowDefinition>
                                 <RowDefinition Height="*"></RowDefinition>
                             </Grid.RowDefinitions>
-              
+
 
                             <TextBlock Grid.Row="0"
                                        Grid.ColumnSpan="3"
                                        Foreground="AliceBlue"
-                                       TextAlignment="Center" 
+                                       TextAlignment="Center"
                                        Text="Выбрать размер поля"
-                                       FontSize="20"/>
+                                       FontSize="20" />
 
                             <Grid Grid.Row="1"
                                   Margin="0, 20, 0, 0">
@@ -248,23 +497,23 @@
                                              VerticalAlignment="Center"
                                              Foreground="AliceBlue"
                                              FontSize="10"
-                                             Name="s"
+                                             GroupName="small"
                                              Checked="ToggleButton_OnChecked"
-                                             IsChecked="True"/>
+                                             IsChecked="True" />
                                 <RadioButton Content="Среднее"
                                              Grid.Column="1"
                                              VerticalAlignment="Center"
                                              Foreground="AliceBlue"
-                                             Name="m"
+                                             GroupName="medium"
                                              FontSize="10"
-                                             Checked="ToggleButton_OnChecked"/>
+                                             Checked="ToggleButton_OnChecked" />
                                 <RadioButton Content="Большое"
                                              Grid.Column="2"
                                              VerticalAlignment="Center"
                                              Foreground="AliceBlue"
-                                             Name="l"
+                                             GroupName="large"
                                              FontSize="10"
-                                             Checked="ToggleButton_OnChecked"/>
+                                             Checked="ToggleButton_OnChecked" />
                             </Grid>
                         </Grid>
 
@@ -272,17 +521,12 @@
                     </Grid>
                 </Grid>
 
-                
-                
-
-                
-               
                 <Button Content="Назад"
                         Background="LightGreen"
                         Padding="5"
                         VerticalAlignment="Bottom"
                         Click="BackButton_OnClick"
-                        Grid.Row="6"/>
+                        Grid.Row="6" />
             </Grid>
 
         </Grid>

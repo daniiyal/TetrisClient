@@ -18,8 +18,10 @@
     <None Remove="Assets\Block-S.png" />
     <None Remove="Assets\Block-T.png" />
     <None Remove="Assets\Block-Z.png" />
+    <None Remove="Assets\cup.png" />
     <None Remove="Assets\Icon.ico" />
     <None Remove="Assets\photo.jpg" />
+    <None Remove="Assets\record.png" />
     <None Remove="Assets\TileBlue.png" />
     <None Remove="Assets\TileCyan.png" />
     <None Remove="Assets\TileEmpty.png" />
@@ -172,7 +174,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\cup.png" />
     <Resource Include="Assets\photo.jpg" />
+    <Resource Include="Assets\record.png" />
     <Resource Include="Assets\Tiles\Block-Empty.png" />
     <Resource Include="Assets\Tiles\tile (1).png" />
     <Resource Include="Assets\Tiles\tile (10).png" />

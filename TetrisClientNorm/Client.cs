@@ -14,7 +14,7 @@ namespace TetrisClientNorm
 
         private UdpClient udpClient;
 
-        public IPEndPoint serverEndPoint { get; set; }
+        public IPEndPoint ServerEndPoint { get; set; }
 
         public Client()
         {
@@ -26,13 +26,20 @@ namespace TetrisClientNorm
         public void ConnectServer()
         {
             udpClient.Close();
-            client.Connect(serverEndPoint);
+            client.Connect(ServerEndPoint);
         }
 
-        public async void SendMessage(String message)
+        public async void SendMessageAsync(String message)
         {
-            var messageBytes = Encoding.UTF8.GetBytes(message + '\n');
-            await client.SendAsync(messageBytes, SocketFlags.None);
+            try
+            {
+                var messageBytes = Encoding.UTF8.GetBytes(message + '\n');
+                await client.SendAsync(messageBytes, SocketFlags.None);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         public string ReceiveResponse()
@@ -50,10 +57,9 @@ namespace TetrisClientNorm
                     response.Add(bytesRead[0]);
 
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    Console.WriteLine(e);
-                    throw;
+                    throw new SocketException();
                 }
 
             }
@@ -63,48 +69,63 @@ namespace TetrisClientNorm
 
         public void DisconnectServer()
         {
+
             client.Shutdown(SocketShutdown.Both);
         }
 
         public async Task<List<string>> FindServer()
         {
-            //List<string> address;
-            Task.Run(SendMessageAsync);
-            var address = await ReceiveMessage();
+            Task.Run(SendBroadcastMessageAsync);
+            var address = await Task.Run(ReceiveMessage);
             return address;
         }
 
-        private async Task SendMessageAsync()
+        private async Task SendBroadcastMessageAsync()
         {
             while (true)
             {
-                var data = Encoding.ASCII.GetBytes("Want to play");
-                udpClient.Send(data, data.Length, IPAddress.Broadcast.ToString(), 333);
-                await Task.Delay(1000);
+                try
+                {
+                    var data = Encoding.ASCII.GetBytes("Want to play");
+                    udpClient.Send(data, data.Length, IPAddress.Broadcast.ToString(), 333);
+                    await Task.Delay(1000);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    break;
+                }
+               
             }
         }
 
-        private async Task<List<string>> ReceiveMessage()
+        private List<string> ReceiveMessage()
         {
+
             var from = new IPEndPoint(0, 0);
 
-          
             while (true)
             {
-                var receiveBUffer = udpClient.Receive(ref from);
-                
-                Console.WriteLine(Encoding.ASCII.GetString(receiveBUffer));
-
-                if (receiveBUffer != null)
+                try
                 {
-                    return new List<string>()
+                    var receiveBuffer = udpClient.Receive(ref from);
+
+                    if (Encoding.ASCII.GetString(receiveBuffer) == "Come and play")
                     {
-                        from.Address.ToString(),
-                        from.Port.ToString()
-                    };
+                        return new List<string>()
+                            {
+                                from.Address.ToString(),
+                                from.Port.ToString()
+                            };
+                    }
                 }
-           
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    return null;
+                }
             }
+
         }
 
     }
