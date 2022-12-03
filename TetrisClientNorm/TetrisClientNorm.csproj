@@ -25,6 +25,7 @@
     <None Remove="Assets\record.png" />
     <None Remove="Assets\TileBlue.png" />
     <None Remove="Assets\TileCyan.png" />
+    <None Remove="Assets\TileEmpty — копия.png" />
     <None Remove="Assets\TileEmpty.png" />
     <None Remove="Assets\TileGreen.png" />
     <None Remove="Assets\TileOrange.png" />
@@ -179,6 +180,7 @@
     <Resource Include="Assets\IMG_0986.PNG" />
     <Resource Include="Assets\photo.jpg" />
     <Resource Include="Assets\record.png" />
+    <Resource Include="Assets\TileEmpty — копия.png" />
     <Resource Include="Assets\Tiles\Block-Empty.png" />
     <Resource Include="Assets\Tiles\tile (1).png" />
     <Resource Include="Assets\Tiles\tile (10).png" />

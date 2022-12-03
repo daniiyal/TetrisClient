@@ -94,7 +94,7 @@
                            TextAlignment="Center"
                            Margin="0, 0, 0, 20" />
                 <Button Content="Играть заново"
-                        FontSize="48"
+                        FontSize="40"
                         FontFamily="Roboto"
                         FontWeight="Bold"
                         Background="LightGreen"
@@ -104,6 +104,7 @@
                 <Button Content="Выйти в меню"
                         Background="LightCoral"
                         FontFamily="Roboto"
+                        FontSize="40"
                         FontWeight="Bold"
                         Margin="0, 20, 0, 0"
                         Padding="15"

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Media;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -33,15 +34,16 @@ namespace TetrisClientNorm
 
         public static string FieldSize = "small";
 
+        
         private Image[,] imageControls;
 
         private Client client;
+        private SoundPlayer soundPlayer;
 
         private ImageSource[] InitImages()
         {
             ImageSource[] tileImages = new ImageSource[113];
             tileImages[0] = new BitmapImage(new Uri("Assets/Tiles/Block-Empty.png", UriKind.Relative));
-
             int tile = 0;
 
             for (int i = 1; i < tileImages.Length; i++)
@@ -291,6 +293,7 @@ namespace TetrisClientNorm
             client.ServerEndPoint = new IPEndPoint(IPAddress.Parse(selectedAddress.IpAddress),
                     Convert.ToInt32(selectedAddress.Port));
             client.ConnectServer();
+            MessageBox.Show("Выполнено подключение");
         }
 
         private async void StartGameButton_OnClick(object sender, RoutedEventArgs e)
