@@ -180,8 +180,9 @@ namespace TetrisClientNorm
                 }
 
                 int score;
-                Int32.TryParse(rows[rows.Length - 1], out score);
+                Int32.TryParse(rows[rows.Length - 2], out score);
                 ScoreTest.Text = "Очки: " + score;
+                Time.Text = "Время: " + rows[rows.Length - 1];
                 return true;
             }
             catch (Exception)
@@ -240,23 +241,22 @@ namespace TetrisClientNorm
         {
             var window = Window.GetWindow(this);
             window.KeyDown += KeyEvents;
-
         }
 
         private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             await StartGame();
-
         }
 
         private async void FindServer(object sender, RoutedEventArgs e)
         {
+            ServerAddresses.Items.Clear();
             var list = await client.FindServer();
             if (list != null)
             {
                 ServerAddresses.Items.Add(new Address(list[0], list[1]));
             }
-            
+
         }
 
         private void KeyEvents(object sender, KeyEventArgs e)
@@ -281,18 +281,16 @@ namespace TetrisClientNorm
 
         private void ServerAddresses_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            try
-            {
-                var selectedAddress = (Address)ServerAddresses.SelectedItem;
-                client.ServerEndPoint = new IPEndPoint(IPAddress.Parse(selectedAddress.IpAddress),
-                    Convert.ToInt32(selectedAddress.Port));
-                client.ConnectServer();
-            }
-            catch (Exception)
+
+            var selectedAddress = (Address)ServerAddresses.SelectedItem;
+            if (selectedAddress == null)
             {
                 MessageBox.Show("Не удалось подключиться к серверу");
+                return;
             }
-
+            client.ServerEndPoint = new IPEndPoint(IPAddress.Parse(selectedAddress.IpAddress),
+                    Convert.ToInt32(selectedAddress.Port));
+            client.ConnectServer();
         }
 
         private async void StartGameButton_OnClick(object sender, RoutedEventArgs e)
@@ -326,7 +324,7 @@ namespace TetrisClientNorm
         private void ToggleButton_OnChecked(object sender, RoutedEventArgs e)
         {
             RadioButton li = (sender as RadioButton);
-            FieldSize = li.GroupName;
+            FieldSize = li.Name;
         }
 
         private void AddScoreName_Button_OnClick(object sender, RoutedEventArgs e)
@@ -369,7 +367,6 @@ namespace TetrisClientNorm
                 TopScoreMessage.Children.Add(text);
             }
 
-
         }
 
         private void BackToMenuButton_OnClick(object sender, RoutedEventArgs e)
@@ -377,6 +374,7 @@ namespace TetrisClientNorm
             StartMenu.Visibility = Visibility.Visible;
 
             TopScorers.Visibility = Visibility.Hidden;
+            GameScreen.Visibility = Visibility.Hidden;
             SettingMenu.Visibility = Visibility.Hidden;
             HighScore.Visibility = Visibility.Hidden;
         }
@@ -391,7 +389,19 @@ namespace TetrisClientNorm
         private void ToggleRecordsButton_OnChecked(object sender, RoutedEventArgs e)
         {
             RadioButton li = (sender as RadioButton);
-            FieldSize = li.Name;
+
+            switch (li.Content)
+            {
+                case "Большое":
+                    FieldSize = "large";
+                    break;
+                case "Среднее":
+                    FieldSize = "medium";
+                    break;
+                case "Маленькое":
+                    FieldSize = "small";
+                    break;
+            }
         }
 
 
@@ -399,6 +409,7 @@ namespace TetrisClientNorm
         {
             try
             {
+
                 if (client.ServerEndPoint == null)
                 {
                     MessageBox.Show("Нет подключения к серверу. Проверьте настройки");
@@ -434,6 +445,12 @@ namespace TetrisClientNorm
                 MessageBox.Show("Нет подключения к серверу. Проверьте настройки");
             }
 
+        }
+
+        private void ExitButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            client.DisconnectServer();
+            Application.Current.Shutdown();
         }
     }
 }

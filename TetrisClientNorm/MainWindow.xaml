@@ -13,11 +13,12 @@
 
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="Assets/Back.jpg"></ImageBrush>
+            <ImageBrush ImageSource="Assets/IMG_0986.PNG"></ImageBrush>
         </Grid.Background>
 
         <Grid x:Name="GameScreen"
-              Visibility="Visible">
+              Background="#CC000000"
+              Visibility="Hidden">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
@@ -34,7 +35,7 @@
                      Grid.ColumnSpan="2"
                      Margin="50,0,0,20">
                 <Canvas x:Name="GameCanvas"
-                        Background="Black"
+                        Background="LightGray"
                         ClipToBounds="True"
                         Loaded="GameCanvas_OnLoaded" />
             </Viewbox>
@@ -42,8 +43,13 @@
             <TextBlock x:Name="ScoreTest"
                        Grid.Row="0"
                        Grid.Column="1"
+                       Foreground="AliceBlue"
                        TextAlignment="Center" Text="Очки: 0" />
-
+            <TextBlock x:Name="Time"
+                       Grid.Row="0"
+                       Grid.Column="2"
+                       Foreground="AliceBlue"
+                       TextAlignment="Center" Text="Время: 0:0" />
             <StackPanel Grid.Row="1"
                         Grid.Column="2"
                         VerticalAlignment="Center"
@@ -95,6 +101,13 @@
                         Margin="0, 20, 0, 0"
                         Padding="15"
                         Click="ButtonBase_OnClick" />
+                <Button Content="Выйти в меню"
+                        Background="LightCoral"
+                        FontFamily="Roboto"
+                        FontWeight="Bold"
+                        Margin="0, 20, 0, 0"
+                        Padding="15"
+                        Click="BackToMenuButton_OnClick" />
             </StackPanel>
         </Grid>
 
@@ -200,7 +213,7 @@
         </Grid>
 
         <Grid x:Name="StartMenu"
-              Background="#CC000000"
+              Background="#AA000000"
               Grid.RowSpan="2"
               Grid.ColumnSpan="3"
               Visibility="Visible">
@@ -239,7 +252,7 @@
                 <Button Content="Выход"
                         Background="LightGreen"
                         Padding="15"
-                        Click="StartGameButton_OnClick"
+                        Click="ExitButton_OnClick"
                         Margin="0, 50, 0, 0" />
             </StackPanel>
 
@@ -248,8 +261,8 @@
         <Grid x:Name="TopScorers"
               Grid.RowSpan="2"
               Grid.ColumnSpan="3"
-              Visibility="Hidden"
-              Margin="0, 20, 0, 20">
+              Background="#AA000000"
+              Visibility="Hidden">
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -273,10 +286,16 @@
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
 
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
                         <TextBlock Foreground="MediumSlateBlue"
                                    FontFamily="Roboto"
                                    FontWeight="Bold"
                                    Text="Выберите поле"
+                                   Grid.ColumnSpan="2"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" />
 
@@ -295,15 +314,12 @@
                                          VerticalAlignment="Center"
                                          Foreground="MediumSlateBlue"
                                          FontSize="15"
-                                         Name="small"
                                          Checked="ToggleRecordsButton_OnChecked"
-                                         IsChecked="True"
                                          HorizontalAlignment="Center" />
                             <RadioButton Content="Среднее"
                                          Grid.Column="1"
                                          VerticalAlignment="Center"
                                          Foreground="MediumSlateBlue"
-                                         Name="medium"
                                          FontSize="15"
                                          Checked="ToggleRecordsButton_OnChecked"
                                          HorizontalAlignment="Center" />
@@ -311,12 +327,21 @@
                                          Grid.Column="2"
                                          VerticalAlignment="Center"
                                          Foreground="MediumSlateBlue"
-                                         Name="large"
                                          FontSize="15"
                                          HorizontalAlignment="Center"
                                          Checked="ToggleRecordsButton_OnChecked" />
                         </Grid>
 
+                        <Button Content="Найти"
+                                Background="LightGreen"
+                                Padding="5"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Grid.Row="1"
+                                FontSize="20"
+                                Grid.Column="1"
+                                Click="RecordsButton_OnClick"
+                                Margin="0, 0, 0, 0" />
                     </Grid>
 
                 </Grid>
@@ -361,7 +386,7 @@
         </Grid>
 
         <Grid x:Name="SettingMenu"
-              Background="#FF000000"
+              Background="#AA000000"
               Grid.RowSpan="2"
               Grid.ColumnSpan="3"
               Visibility="Hidden">
@@ -497,21 +522,21 @@
                                              VerticalAlignment="Center"
                                              Foreground="AliceBlue"
                                              FontSize="10"
-                                             GroupName="small"
+                                             Name="small"
                                              Checked="ToggleButton_OnChecked"
                                              IsChecked="True" />
                                 <RadioButton Content="Среднее"
                                              Grid.Column="1"
                                              VerticalAlignment="Center"
                                              Foreground="AliceBlue"
-                                             GroupName="medium"
+                                             Name="medium"
                                              FontSize="10"
                                              Checked="ToggleButton_OnChecked" />
                                 <RadioButton Content="Большое"
                                              Grid.Column="2"
                                              VerticalAlignment="Center"
                                              Foreground="AliceBlue"
-                                             GroupName="large"
+                                             Name="large"
                                              FontSize="10"
                                              Checked="ToggleButton_OnChecked" />
                             </Grid>

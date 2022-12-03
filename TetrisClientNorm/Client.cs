@@ -69,8 +69,16 @@ namespace TetrisClientNorm
 
         public void DisconnectServer()
         {
+            try
+            {
+                SendMessageAsync("Shutdown");
+                client.Shutdown(SocketShutdown.Both);
+            }
+            catch (Exception)
+            {
 
-            client.Shutdown(SocketShutdown.Both);
+            }
+           
         }
 
         public async Task<List<string>> FindServer()
